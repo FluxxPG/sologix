@@ -1,0 +1,67 @@
+.slider_top_container {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Testimonials Slider Styles */
+.testimonial-slider .slick-dots {
+    bottom: -50px;
+}
+
+.testimonial-slider .slick-dots li {
+    margin: 0 4px;
+    width: 12px;
+    height: 12px;
+}
+
+.testimonial-slider .slick-dots li button {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 50%;
+    background-color: #cbd5e0;
+    transition: all 0.3s ease;
+}
+
+.testimonial-slider .slick-dots li button:before {
+    display: none;
+}
+
+.testimonial-slider .slick-dots li.slick-active button {
+    background-color: #3182ce;
+    transform: scale(1.2);
+}
+
+.testimonial-slider .slick-slide > div {
+    padding: 10px 0;
+}
+
+/* Testimonial Card Hover Effect */
+.testimonial-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Quote Marks */
+.quote-mark {
+    color: #e2e8f0;
+    font-size: 6rem;
+    position: absolute;
+    line-height: 1;
+    z-index: 0;
+}
+
+.quote-start {
+    top: -1rem;
+    left: 0.5rem;
+}
+
+.quote-end {
+    bottom: -2rem;
+    right: 0.5rem;
+}
