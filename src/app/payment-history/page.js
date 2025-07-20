@@ -34,8 +34,8 @@ const PaymentHistory = () => {
           }
         });
         
-        if (response.data?.success) {
-          setPayments(response.data.data || []);
+        if (response.status==200) {
+          setPayments(response.data || []);
         } else {
           console.warn("Unexpected response format:", response.data);
           toast.warning(response.data?.message || "Received unexpected data format from server");
