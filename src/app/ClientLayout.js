@@ -42,20 +42,27 @@ export function ClientLayout({ children }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    const isPublicRoute = publicRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
-    );
+    // Skip auth check for the home page
+    if (pathname === '/') return;
+    
+    const isPublicRoute = publicRoutes.some(route => {
+      // Handle root path specially
+      if (route === '/' && pathname === '/') return true;
+      // Handle other public routes
+      return pathname === route || pathname.startsWith(`${route}/`);
+    });
+    
+    // If it's a public route, no need to check auth
+    if (isPublicRoute) return;
     
     const authToken = document.cookie
       .split('; ')
       .find(row => row.startsWith('auth_token='))
       ?.split('=')[1];
     
-    // If not a public route and no auth token, redirect to login
+    // If not a public route and no auth token, redirect to home page instead of login
     if (!isPublicRoute && !authToken) {
-      const loginUrl = new URL('/login', window.location.origin);
-      loginUrl.searchParams.set('redirect', pathname);
-      window.location.href = loginUrl.toString();
+      window.location.href = '/';
     }
   }, [pathname]);
 

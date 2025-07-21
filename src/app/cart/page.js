@@ -706,7 +706,7 @@ const CartPage = () => {
               width={100}
               height={100}
               className="mb-4"
-              priority={false}
+              priority={true}
             />
             <p className="text-xl md:text-2xl font-bold text-gray-600 text-center">
               Your Cart is Empty

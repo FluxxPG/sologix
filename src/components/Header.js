@@ -1,4 +1,5 @@
 "use client";
+import { memo, useCallback, useMemo } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -19,6 +20,60 @@ import React, { useEffect, useState } from "react";
 import { Dropdown, Space } from "antd";
 import { API } from "@/utils";
 import { useRouter } from "next/navigation";
+
+// Memoized Cart Icon Component
+const CartIcon = memo(({ itemCount, loading }) => (
+  <div className="relative">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-gray-700"
+    >
+      <circle cx="9" cy="21" r="1"></circle>
+      <circle cx="20" cy="21" r="1"></circle>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+    {!loading && itemCount > 0 && (
+      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+        {itemCount}
+      </div>
+    )}
+  </div>
+));
+
+// Memoized Menu Item Component
+const MenuItem = memo(({ item, onItemClick }) => (
+  <NavbarMenuItem className="border-b border-gray-100 last:border-0">
+    <Link
+      href={item.route}
+      className="w-full text-gray-700 hover:bg-gray-50 hover:text-blue-600 py-4 px-4 block transition-colors duration-150 flex items-center active:bg-gray-100"
+      onClick={onItemClick}
+    >
+      <span className="flex-1">{item.name}</span>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width="16" 
+        height="16" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        className="text-gray-400"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </Link>
+  </NavbarMenuItem>
+));
 
 const Header = () => {
   const { isLoading, userSession } = useSelector((state) => state.session);
@@ -67,7 +122,8 @@ const Header = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const menuItems = [
+  // Memoize menu items to prevent recreation on every render
+  const menuItems = useMemo(() => [
     { name: "Home", route: userSession ? "/afterleadingpage" : "/" },
     { name: "About Us", route: "/aboutus" },
     { name: "For Home", route: "/forhome" },
@@ -76,7 +132,22 @@ const Header = () => {
     { name: "Resource", route: "/resource" },
     { name: "Contact Us", route: "/contactus" },
     { name: "Login", route: "/login" },
-  ];
+  ], [userSession]);
+  
+  // Memoize click handlers
+  const handleMenuToggle = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
+  
+  const handleMenuItemClick = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+  
+  const handleCartClick = useCallback((e) => {
+    e.stopPropagation();
+    router.push('/cart');
+    setIsMenuOpen(false);
+  }, [router]);
   const handleClickLogout = () => {
     dispatch(logout());
     localStorage.removeItem("userSession");
@@ -109,6 +180,7 @@ const Header = () => {
           wrapper: "px-4 sm:px-6 lg:px-8 py-0",
           base: "h-16"
         }}
+        shouldHideOnClick
       >
         <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo - Far Left */}
@@ -154,29 +226,13 @@ const Header = () => {
               </Button>
             ) : (
               <div className="hidden xl:flex items-center">
-                <a href="/cart" className="relative p-2 mr-4 rounded-full hover:bg-gray-100">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-700"
-                  >
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                  </svg>
-                  {!loading && cartList?.length > 0 && (
-                    <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {cartList.length}
-                    </div>
-                  )}
-                </a>
+                <button 
+                  onClick={handleCartClick}
+                  className="relative p-2 mr-4 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                  aria-label={`Cart ${cartList?.length ? `(${cartList.length} items)` : ''}`}
+                >
+                  <CartIcon itemCount={cartList?.length || 0} loading={loading} />
+                </button>
                 
                 <Dropdown
                   menu={{ items: dropdownItems }}
@@ -190,31 +246,53 @@ const Header = () => {
             )}
             
             {/* Mobile menu button */}
-            <NavbarMenuToggle
+            <button 
+              onClick={handleMenuToggle}
+              className="xl:hidden p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="xl:hidden"
-            />
+            >
+              {isMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              )}
+            </button>
           </div>
         </div>
-        <NavbarMenu>
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={item.route}>
-              <Link
-                className="w-full"
-                color={
-                  index === 0
-                    ? "warning"
-                    : index === menuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href={item.route}
-                size="lg"
-                onClick={() => setIsMenuOpen(false)}
+        <NavbarMenu className="pt-4">
+          {/* Mobile Cart Button */}
+          {userSession && (
+            <NavbarItem className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <button 
+                onClick={handleCartClick}
+                className="flex items-center text-gray-700 hover:text-blue-600 w-full py-2"
+                aria-label="View cart"
               >
-                {item.name}
-              </Link>
-            </NavbarMenuItem>
+                <CartIcon itemCount={cartList?.length || 0} loading={loading} />
+                <span className="ml-3 font-medium">My Cart</span>
+                {!loading && cartList?.length > 0 && (
+                  <span className="ml-auto bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    {cartList.length} {cartList.length === 1 ? 'item' : 'items'}
+                  </span>
+                )}
+              </button>
+            </NavbarItem>
+          )}
+          
+          {/* Menu Items */}
+          {menuItems.map((item) => (
+            <MenuItem 
+              key={item.route} 
+              item={item} 
+              onItemClick={handleMenuItemClick} 
+            />
           ))}
         </NavbarMenu>
       </Navbar>

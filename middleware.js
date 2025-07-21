@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const publicPaths = [
-  '/',
+  '/$', // Match exactly the root path
   '/login',
   '/register',
   '/forgot-password',
@@ -9,11 +9,27 @@ const publicPaths = [
   '/contactus',
   '/privacy',
   '/termCondition',
-  '/api/auth/.*' // Allow all auth API routes
+  '/afterleadingpage', // Add afterleadingpage to public paths
+  '/product-details/.*', // Allow product details pages
+  '/api/auth/.*', // Allow all auth API routes
+  '^/_next/static/.*', // Allow Next.js static files
+  '^/_next/image/.*', // Allow Next.js image optimization
+  '^/favicon.ico$', // Allow favicon
+  '\.(svg|png|jpg|jpeg|gif|webp)$' // Allow image files
 ];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
+  
+  // Always allow these paths without any checks
+  if (
+    pathname === '/' || // Home page
+    pathname.startsWith('/_next/') || // Next.js internal routes
+    pathname.startsWith('/api/') || // API routes
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|css|js)$/) // Static files
+  ) {
+    return NextResponse.next();
+  }
   
   // Check if the current path is public
   const isPublicPath = publicPaths.some(path => {
@@ -33,11 +49,9 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // If user is not authenticated and path is not public, redirect to login
+  // If user is not authenticated and path is not public, redirect to home page
   if (!authToken) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   // For authenticated users, continue to the requested page
