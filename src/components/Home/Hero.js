@@ -70,8 +70,7 @@ export const Hero = ({ badge = true }) => {
                 {words[currentWordIndex]}
               </span>
             </h2>
-            <div className="w-20 h-1 bg-blue-400 mx-auto mb-6 rounded-full"></div>
-            <p className="text-base sm:text-lg md:text-xl text-white/90 mt-4 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mt-6 max-w-2xl mx-auto leading-relaxed">
               Join the renewable energy revolution. Our solar solutions provide clean, sustainable power while saving you money and protecting the planet.
             </p>
           </div>
