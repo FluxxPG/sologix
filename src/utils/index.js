@@ -7,7 +7,7 @@ export { loadScript } from './loadScript';
 
 // Create axios instance
 const API = axios.create({
-  baseURL: "https://sologix-web.onrender.com/v1/",
+  baseURL: "https://sologix-web-nvm3.vercel.app/v1/",
   headers: {
     "Content-Type": "application/json",
   },
