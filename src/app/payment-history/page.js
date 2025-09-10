@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Spinner } from "@nextui-org/react";
+import { PaymentHistorySkeleton } from "@/components/common/LoadingSkeleton";
 
 const PaymentHistory = () => {
   const router = useRouter();
@@ -94,10 +95,7 @@ const PaymentHistory = () => {
         </h1>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-64 space-y-4">
-            <Spinner size="lg" color="primary" />
-            <p className="text-gray-600">Loading your payment history...</p>
-          </div>
+          <PaymentHistorySkeleton />
         ) : payments.length > 0 ? (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="overflow-x-auto">

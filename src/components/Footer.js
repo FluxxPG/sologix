@@ -9,11 +9,11 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
   
   const socialLinks = [
-    { icon: <FaFacebookF className="text-lg" />, url: "#" },
-    { icon: <FaTwitter className="text-lg" />, url: "#" },
-    { icon: <FaInstagram className="text-lg" />, url: "#" },
-    { icon: <FaLinkedin className="text-lg" />, url: "#" },
-    { icon: <FaYoutube className="text-lg" />, url: "#" },
+    { icon: <FaFacebookF className="text-lg" />, url: "https://facebook.com/sologixenergy", name: "Facebook" },
+    { icon: <FaTwitter className="text-lg" />, url: "https://twitter.com/sologixenergy", name: "Twitter" },
+    { icon: <FaInstagram className="text-lg" />, url: "https://instagram.com/sologixenergy", name: "Instagram" },
+    { icon: <FaLinkedin className="text-lg" />, url: "https://linkedin.com/company/sologixenergy", name: "LinkedIn" },
+    { icon: <FaYoutube className="text-lg" />, url: "https://youtube.com/@sologixenergy", name: "YouTube" },
   ];
 
   const quickLinks = [
@@ -53,7 +53,7 @@ export const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="h-10 w-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-blue-500 transition-all duration-300"
-                  aria-label={social.icon.type.name}
+                  aria-label={social.name}
                 >
                   {social.icon}
                 </a>

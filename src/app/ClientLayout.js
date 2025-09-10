@@ -8,6 +8,7 @@ import store from "@/redux/store";
 import Header from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { NextUIProviders } from "@/providers/nextui-provider";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 // Routes where we hide header/footer
 const hideHeaderFooterRoutes = ['/login', '/register', '/forgot-password'];
@@ -22,7 +23,15 @@ const publicRoutes = [
   '/aboutus',
   '/contactus',
   '/privacy',
-  '/termCondition'
+  '/termCondition',
+  '/forhome',
+  '/solorbusiness',
+  '/becomepartner',
+  '/resource',
+  '/refund',
+  '/products',
+  '/about',
+  '/contact'
 ];
 
 export function ClientLayout({ children }) {
@@ -75,12 +84,16 @@ export function ClientLayout({ children }) {
   return (
     <Provider store={store}>
       <NextUIProviders>
-        {!shouldHideHeaderFooter && <Header />}
-        <main className={shouldHideHeaderFooter ? 'min-h-screen' : 'min-h-[calc(100vh-64px)]'}>
-          {children}
-        </main>
-        {!shouldHideHeaderFooter && <Footer />}
-        <Toaster position="top-right" />
+        <ErrorBoundary>
+          {!shouldHideHeaderFooter && <Header />}
+          <main className={shouldHideHeaderFooter ? 'min-h-screen' : 'min-h-[calc(100vh-64px)]'}>
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+          </main>
+          {!shouldHideHeaderFooter && <Footer />}
+          <Toaster position="top-right" />
+        </ErrorBoundary>
       </NextUIProviders>
     </Provider>
   );

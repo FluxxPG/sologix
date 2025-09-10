@@ -180,7 +180,7 @@ const RazorpayCheckout = ({
     <Button
       className="w-full bg-[#00237D] text-white rounded-full mt-5"
       size="lg"
-      onClick={handlePayment}
+      onPress={handlePayment}
       isLoading={loading}
       disabled={loading || !isRazorpayLoaded}
     >

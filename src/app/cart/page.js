@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import RazorpayCheckout from "@/components/Payments/RazorpayCheckout";
+import { CartItemSkeleton } from "@/components/common/LoadingSkeleton";
 
 const CartPage = () => {
   const router = useRouter();
@@ -30,10 +31,6 @@ const CartPage = () => {
         },
       });
 
-      console.log("Raw API Response:", response);
-      console.log("Response Data:", response.data);
-      console.log("Response Status:", response.status);
-      console.log("Response Headers:", response.headers);
 
       if (response.status === 200) {
         // Check different possible response structures
@@ -59,19 +56,12 @@ const CartPage = () => {
             : [];
         }
 
-        console.log("Extracted Cart Items:", cartItems);
         setCartList(cartItems);
 
         if (cartItems.length === 0) {
-          console.warn("No items found in cart");
           toast.info("Your cart is empty");
         }
       } else {
-        console.error("API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          data: response.data,
-        });
         toast.error(
           response.data?.message ||
             "Failed to fetch cart items. Please try again."
@@ -79,7 +69,6 @@ const CartPage = () => {
         setCartList([]);
       }
     } catch (error) {
-      console.error("Error fetching cart:", error);
 
       if (error.response?.status === 401) {
         // Token expired or invalid, redirect to login
@@ -137,20 +126,16 @@ const CartPage = () => {
         return;
       }
 
-      console.log("Attempting to remove product:", productId);
-      console.log("Current cart before removal:", cartList);
 
       // Optimistically update the UI first
       setCartList((prevCart) => {
         const updatedCart =
           prevCart?.filter((item) => item._id !== productId) || [];
-        console.log("Optimistic UI update - new cart:", updatedCart);
         return updatedCart;
       });
 
       try {
         // Then make the API call
-        console.log("Making API call to remove item...");
         const response = await API.delete(
           `/cart/Remove-from-cart?productId=${productId}`,
           {
@@ -162,7 +147,6 @@ const CartPage = () => {
           }
         );
 
-        console.log("API Response:", response);
 
         // Verify the response
         if (response.status !== 200) {
@@ -171,18 +155,7 @@ const CartPage = () => {
           );
         }
 
-        console.log("Item successfully removed from server");
       } catch (apiError) {
-        console.error("Error in API call:", {
-          message: apiError.message,
-          response: apiError.response?.data,
-          status: apiError.response?.status,
-          config: {
-            url: apiError.config?.url,
-            method: apiError.config?.method,
-            headers: apiError.config?.headers,
-          },
-        });
         throw apiError;
       }
 
@@ -190,7 +163,6 @@ const CartPage = () => {
       toast.success("Item removed from cart successfully.");
 
       try {
-        console.log("Refreshing cart to ensure sync with server...");
         // Force a hard refresh of the cart from the server
         const refreshResponse = await API.get("/cart/Get-user-cart", {
           headers: {
@@ -202,7 +174,6 @@ const CartPage = () => {
           },
         });
 
-        console.log("Cart refresh response:", refreshResponse.data);
 
         if (refreshResponse.status === 200) {
           // Handle different possible response formats
@@ -212,12 +183,10 @@ const CartPage = () => {
             [];
           const cartItems = Array.isArray(serverCart) ? serverCart : [];
 
-          console.log("Refreshed cart items from server:", cartItems);
           setCartList(cartItems);
 
           // If cart is empty after refresh, redirect
           if (cartItems.length === 0) {
-            console.log("Cart is now empty, redirecting...");
             toast.info("Your cart is now empty.");
             router.replace("/afterleadingpage");
           } else {
@@ -226,28 +195,18 @@ const CartPage = () => {
               (item) => item._id === productId
             );
             if (itemStillExists) {
-              console.error(
-                "Item still exists in cart after removal:",
-                productId
-              );
               toast.error("Failed to remove item. Please try again.");
               // Force a full page reload as a last resort
               window.location.reload();
             }
           }
         } else {
-          console.error(
-            "Failed to refresh cart:",
-            refreshResponse.status,
-            refreshResponse.data
-          );
           // If we can't refresh, at least show a message
           toast.warning(
             "Item removed, but we couldn't verify the cart status."
           );
         }
       } catch (refreshError) {
-        console.error("Error refreshing cart:", refreshError);
         toast.warning("Item removed, but we couldn't verify the cart status.");
       }
     } catch (error) {
@@ -271,8 +230,7 @@ const CartPage = () => {
   const [paymentLoading, setPaymentLoading] = useState(false);
 
   const handlePaymentSuccess = async (paymentData) => {
-    const bookingFee = 2000; // Fixed booking fee in INR
-    console.log("Payment successful:", paymentData);
+    const bookingAmount = 2000; // Fixed booking amount in INR
 
     try {
       // Get access token from localStorage
@@ -299,7 +257,7 @@ const CartPage = () => {
         razorpay_order_id: paymentData.razorpay_order_id,
         razorpay_payment_id: paymentData.razorpay_payment_id,
         razorpay_signature: paymentData.razorpay_signature,
-        amount_paid: bookingFee, // Use the fixed booking fee
+        amount_paid: bookingAmount, // Use the fixed booking amount
         currency: "INR",
         status: "completed",
         productNames: productNames,
@@ -308,7 +266,6 @@ const CartPage = () => {
         payment_timestamp: new Date().toISOString(),
       };
 
-      console.log("Sending payment to server:", paymentRecord);
 
       // Store payment record
       const response = await API.post(
@@ -323,7 +280,6 @@ const CartPage = () => {
         }
       );
 
-      console.log("Payment storage response:", response.data);
 
       if (response.status === 200) {
         // Clear the cart after successful payment
@@ -340,7 +296,6 @@ const CartPage = () => {
           }&amount=2000&total=${totalCost}&remaining=${totalCost - 2000}`;
           router.push(successUrl);
         } catch (clearError) {
-          console.error("Error clearing cart:", clearError);
           // Don't fail the payment if cart clearing fails
           toast.success("Payment successful! Your order is being processed.");
           router.push(
@@ -351,25 +306,18 @@ const CartPage = () => {
         throw new Error(response.data?.message || "Failed to process payment");
       }
     } catch (error) {
-      console.error("Payment processing error:", error);
       toast.error(
         error.response?.data?.message ||
           error.message ||
           "An error occurred during payment processing. Please check your payment history."
       );
 
-      // Log the error for debugging
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error status:", error.response.status);
-      }
     } finally {
       setPaymentLoading(false);
     }
   };
 
   const handlePaymentError = (error) => {
-    console.error("Razorpay payment error:", error);
 
     let errorMessage = "Payment failed. ";
 
@@ -411,7 +359,6 @@ const CartPage = () => {
       const accessToken = parsedSession?.access_token;
 
       if (!accessToken) {
-        console.error("No access token for fetching payment history");
         return [];
       }
 
@@ -426,11 +373,9 @@ const CartPage = () => {
       if (response.status === 200) {
         return response.data.payments || [];
       } else {
-        console.error("Failed to fetch payment history:", response.data);
         return [];
       }
     } catch (error) {
-      console.error("Error fetching payment history:", error);
       return [];
     }
   };
@@ -444,7 +389,6 @@ const CartPage = () => {
         },
       });
     } catch (error) {
-      console.error("Error clearing cart:", error);
       // Don't show error to user as the payment was successful
     }
   };
@@ -456,11 +400,8 @@ const CartPage = () => {
       const accessToken = parsedSession?.access_token;
 
       if (!accessToken) {
-        console.error("No access token for force clear");
         return;
       }
-
-      console.log("Attempting to force clear cart...");
       const response = await API.delete("/cart/clear-cart", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -468,18 +409,13 @@ const CartPage = () => {
         },
       });
 
-      console.log("Force clear response:", response.data);
-
       if (response.status === 200) {
-        console.log("Cart force cleared successfully");
         setCartList([]);
         localStorage.removeItem("cart"); // Clear any cached cart data
         router.replace("/afterleadingpage");
-      } else {
-        console.error("Failed to force clear cart:", response.data);
       }
     } catch (error) {
-      console.error("Error in forceClearCart:", error);
+      // Silent error handling
     }
   };
 
@@ -630,8 +566,10 @@ const CartPage = () => {
       </h1>
       <div className="max-w-2xl mx-auto bg-white p-4 md:p-6 rounded-lg shadow-lg">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="space-y-4">
+            {[...Array(3)].map((_, index) => (
+              <CartItemSkeleton key={index} />
+            ))}
           </div>
         ) : cartList?.length > 0 ? (
           cartList.map((item) => (
@@ -723,7 +661,7 @@ const CartPage = () => {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">
-                Initial Payment (Booking Fee):
+                Booking Amount:
               </span>
               <span className="text-lg font-semibold text-blue-600">
                 ₹2,000
@@ -737,7 +675,7 @@ const CartPage = () => {
               </span>
             </div>
             <p className="text-sm text-gray-500 mt-2">
-              Pay ₹2,000 now as booking fee. The remaining amount can be paid in
+              Pay ₹2,000 now as booking amount. The remaining amount can be paid in
               installments as per our flexible payment plans.
             </p>
           </div>
@@ -746,12 +684,12 @@ const CartPage = () => {
         {cartList?.length > 0 && !paymentSuccess && (
           <div className="mt-6">
             <RazorpayCheckout
-              amount={2000} // 2000 INR as booking fee
+              amount={2000} // 2000 INR as booking amount
               currency="INR"
               receipt={`order_${Date.now()}`}
               key="rzp_live_owEHmNbTDuJgjq" // Replace with your actual Razorpay key
               name="Solar Solutions"
-              description={`Booking fee for ${cartList?.length || 0} item(s)`}
+              description={`Booking amount for ${cartList?.length || 0} item(s)`}
               image="/logo.png"
               prefill={(() => {
                 const userSession = localStorage.getItem("userSession");
@@ -789,7 +727,7 @@ const CartPage = () => {
             >
               <div className="bg-blue-50 p-4 rounded-lg mb-4">
                 <div className="text-center mb-4">
-                  <p className="text-sm text-gray-600">Initial Booking Fee</p>
+                  <p className="text-sm text-gray-600">Booking Amount</p>
                   <p className="text-3xl font-bold text-[#00237D] mb-1">
                     ₹2,000
                   </p>

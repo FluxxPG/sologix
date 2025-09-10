@@ -10,6 +10,14 @@ const publicPaths = [
   '/contactus',
   '/privacy',
   '/termCondition',
+  '/forhome',
+  '/solorbusiness',
+  '/becomepartner',
+  '/resource',
+  '/refund',
+  '/products',
+  '/about',
+  '/contact',
   '/api/auth/.*' // Allow all auth API routes
 ];
 

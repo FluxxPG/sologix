@@ -29,48 +29,135 @@ const contactInfo = [
 ];
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    state: "",
-    city: "",
-    city: "",
-    message: "",
-    interest: [],
-  });
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  const handleCheckboxChange = (checkedValues) => {
-    setFormData((prev) => ({
-      ...prev,
-      interest: checkedValues,
-    }));
-  };
+  const handleSubmit = (values) => {
+    
+    // Clean and normalize the data directly from form values
+    // Match the exact field names expected by the backend
+    const cleanedData = {
+      name: values.name?.trim() || "",
+      phone: values.phone?.trim() || "",
+      email: values.email?.trim() || "",
+      state: values.state?.trim() || "",
+      city: values.city?.trim() || "",
+      subject: values.message?.trim() || "", // Backend expects 'subject'
+      message: values.message?.trim() || "",
+      intrest: values.interest || [], // Backend has typo: 'intrest' not 'interest'
+    };
+    
+    
+    
+    // Validate required fields
+    if (!cleanedData.name || !cleanedData.email || !cleanedData.phone) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-  const handleSubmit = () => {
-    console.log("Submitting form data:", formData);
-    API.post("/auth/contact-us", formData)
+    // Validate name length and format
+    if (cleanedData.name.length < 2 || cleanedData.name.length > 50) {
+      toast.error(`Name should be between 2 and 50 characters! Current length: ${cleanedData.name.length}`);
+      return;
+    }
+
+    if (!/^[a-zA-Z\s.''-]+$/.test(cleanedData.name)) {
+      toast.error("Name can only contain letters, spaces, and common punctuation");
+      return;
+    }
+
+    // Validate email format and length
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanedData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (cleanedData.email.length > 100) {
+      toast.error("Email must be no more than 100 characters long");
+      return;
+    }
+
+    // Validate phone number
+    if (cleanedData.phone.length < 10 || cleanedData.phone.length > 15) {
+      toast.error("Phone number must be between 10 and 15 digits");
+      return;
+    }
+
+    if (!/^[+]?[\d\s\-()]+$/.test(cleanedData.phone)) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
+    // Validate message if provided
+    if (cleanedData.message && (cleanedData.message.length < 10 || cleanedData.message.length > 500)) {
+      toast.error("Message must be between 10 and 500 characters long");
+      return;
+    }
+
+    setLoading(true);
+    
+    
+    // Create a minimal test payload first
+    const minimalPayload = {
+      name: cleanedData.name,
+      phone: cleanedData.phone,
+      email: cleanedData.email,
+      state: cleanedData.state || "",
+      city: cleanedData.city || "",
+      subject: cleanedData.subject || "",
+      message: cleanedData.message || "",
+      intrest: []  // Empty array to avoid any serialization issues
+    };
+    
+    
+    // Send data with exact field names expected by backend
+    API.post("/auth/contact-us", minimalPayload)
       .then((response) => {
-        if (response.status === 200) {
-          toast("Successfully submitted");
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            state: "",
-            city: "",
-            city: "",
-            pincode: "",
-            message: "",
-            interest: [],
-          });
+        
+        if (response.status === 200 || response.status === 201 || response.status === 202) {
+          // Check if response contains an error message even with success status
+          if (response.data?.error) {
+            
+            // Special handling for the known backend validation bug
+            if (response.data.error === "Name should be between 2 and 50 characters!") {
+              
+              toast.error("Backend validation error: The server incorrectly rejected your valid name. Please inform the development team about this bug.");
+              
+            } else {
+              toast.error(response.data.error);
+            }
+            setLoading(false);
+          } else {
+            toast.success("Successfully submitted! We'll get back to you soon.");
+            // Reset Ant Design form
+            form.resetFields();
+            setLoading(false);
+          }
         } else {
-          toast.error(response?.data?.error || "Submission failed");
+          toast.error(response?.data?.message || response?.data?.error || "Submission failed");
+          setLoading(false);
         }
       })
       .catch((error) => {
-        console.error("API error:", error);
-        toast.error("Data submission failed");
+        let errorMessage = "Data submission failed";
+        
+        const serverError = error.response?.data?.error;
+        
+        if (serverError) {
+          errorMessage = serverError;
+        } else if (error.response?.status === 404) {
+          errorMessage = "Contact form endpoint not found. Please try again later.";
+        } else if (error.response?.status === 500) {
+          errorMessage = "Server error. Please try again later or contact support.";
+        } else if (error.response?.status === 400) {
+          errorMessage = error.response?.data?.message || "Invalid form data. Please check your inputs.";
+        } else if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+          errorMessage = "Network connection failed. Please check your internet connection.";
+        }
+        
+        toast.error(errorMessage);
+        setLoading(false);
       });
   };
 
@@ -157,20 +244,27 @@ const ContactUs = () => {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-            <Form layout="vertical" onFinish={handleSubmit}>
+            <Form 
+              form={form}
+              layout="vertical" 
+              onFinish={handleSubmit}
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Form.Item 
                   label="Your Name" 
                   name="name" 
-                  rules={[{ required: true, message: 'Please enter your name' }]}
+                  rules={[
+                    { required: true, message: 'Please enter your name' },
+                    { min: 2, message: 'Name must be at least 2 characters long' },
+                    { max: 50, message: 'Name must be no more than 50 characters long' },
+                    { pattern: /^[a-zA-Z\s.''-]+$/, message: 'Name can only contain letters, spaces, and common punctuation' }
+                  ]}
                   className="mb-0"
                 >
                   <Input
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     autoComplete="name"
                   />
                 </Form.Item>
@@ -178,11 +272,11 @@ const ContactUs = () => {
                 <Form.Item 
                   label="Email Address" 
                   name="email" 
-                  rules={[{ 
-                    required: true, 
-                    type: 'email',
-                    message: 'Please enter a valid email' 
-                  }]}
+                  rules={[
+                    { required: true, message: 'Please enter your email' },
+                    { type: 'email', message: 'Please enter a valid email address' },
+                    { max: 100, message: 'Email must be no more than 100 characters long' }
+                  ]}
                   className="mb-0"
                 >
                   <Input
@@ -190,8 +284,6 @@ const ContactUs = () => {
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="you@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     autoComplete="email"
                   />
                 </Form.Item>
@@ -199,18 +291,18 @@ const ContactUs = () => {
                 <Form.Item 
                   label="Phone Number" 
                   name="phone" 
-                  rules={[{ 
-                    required: true, 
-                    message: 'Please enter your phone number' 
-                  }]}
+                  rules={[
+                    { required: true, message: 'Please enter your phone number' },
+                    { min: 10, message: 'Phone number must be at least 10 digits' },
+                    { max: 15, message: 'Phone number must be no more than 15 digits' },
+                    { pattern: /^[+]?[\d\s\-()]+$/, message: 'Please enter a valid phone number' }
+                  ]}
                   className="mb-0"
                 >
                   <Input
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="+91 98765 43210"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     autoComplete="tel"
                   />
                 </Form.Item>
@@ -224,8 +316,6 @@ const ContactUs = () => {
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Your City"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     autoComplete="address-level2"
                   />
                 </Form.Item>
@@ -239,8 +329,6 @@ const ContactUs = () => {
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Your State"
-                    value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                     autoComplete="address-level1"
                   />
                 </Form.Item>
@@ -254,8 +342,6 @@ const ContactUs = () => {
                     size="large"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="123456"
-                    value={formData.pincode}
-                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                     autoComplete="postal-code"
                   />
                 </Form.Item>
@@ -265,8 +351,6 @@ const ContactUs = () => {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">What are you interested in?</h3>
                 <Form.Item name="interest" className="mb-0">
                   <Checkbox.Group
-                    value={formData.interest}
-                    onChange={handleCheckboxChange}
                     className="grid grid-cols-2 md:grid-cols-4 gap-4"
                   >
                     {['Home', 'Commercial', 'Business', 'Institution'].map((item) => {
@@ -292,32 +376,38 @@ const ContactUs = () => {
               <Form.Item 
                 name="message" 
                 label="Your Message"
+                rules={[
+                  { min: 10, message: 'Message must be at least 10 characters long' },
+                  { max: 500, message: 'Message must be no more than 500 characters long' }
+                ]}
                 className="mt-6"
               >
                 <Input.TextArea
                   rows={4}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="How can we help you?"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   autoComplete="off"
                 />
               </Form.Item>
 
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold py-4 px-6 rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center space-x-2"
+              <Form.Item className="mt-8">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  loading={loading}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold py-4 px-6 h-auto rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center space-x-2 border-none"
                 >
                   <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" className="text-xl" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"></path>
                   </svg>
                   <span>Send Message</span>
-                </button>
+                </Button>
                 <p className="mt-3 text-sm text-gray-500 text-center">
                   We'll get back to you within 24 hours
                 </p>
-              </div>
+              </Form.Item>
             </Form>
           </div>
         </div>
