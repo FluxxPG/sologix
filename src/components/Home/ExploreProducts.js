@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ProductCardFirst } from "../product-card/ProductCardFirst";
 import { useSelector } from "react-redux";
 import SectionHeader from "../common/SectionHeader";
+import { resetUsedImages } from "@/utils/productImages";
 
 export const ExploreProducts = () => {
   const router = useRouter();
@@ -37,6 +38,8 @@ export const ExploreProducts = () => {
   };
 
   useEffect(() => {
+    // Reset used images for fresh unique images
+    resetUsedImages();
     getProductsList();
   }, []);
 
@@ -73,11 +76,10 @@ export const ExploreProducts = () => {
                 <ProductCardFirst
                   key={card._id}
                   title={card.system}
-                  imageSrc={card.system == "On-Grid Solar System" ? "/product-one.png" : "/product-three.png"}
                   description={card.product_description}
                   productDetails={card.product_details}
+                  productType={card.system}
                   onBuyNow={() => handleBuyNow(card._id)}
-                  onAddToCart={() => handleAddToCart(card)}
                   productId={card._id}
                   handleAddToCart={() => { }}
                   handlePressCard={() => { }}

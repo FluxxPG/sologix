@@ -4,7 +4,6 @@ import ProductImageGallery from "@/components/common/ProductImageGallery";
 
 export const ProductCardFirst = ({
     title = "On-Grid Solar System",
-    imageSrc,
     description = "2KW suitable for small homes (2-3 Rooms)",
     productDetails = {},
     onBuyNow,

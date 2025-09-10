@@ -2,10 +2,6 @@
 export const productImageMap = {
   // On-Grid Solar Systems
   "On-Grid Solar System": [
-    "/Product Images/ongrid-3kw.jpg",
-    "/Product Images/ongrid-3kw-2.jpg", 
-    "/Product Images/ongrid-3kw-3.png",
-    "/Product Images/ongrid-3kw-4.jpg",
     "/Product Images/american-public-power-association-513dBrMJ_5w-unsplash.jpg",
     "/Product Images/american-public-power-association-dCx2xFuPWks-unsplash.jpg",
     "/Product Images/american-public-power-association-fm5_vCUa-Bc-unsplash.jpg",
@@ -18,8 +14,7 @@ export const productImageMap = {
     "/Product Images/bernd-dittrich-6yTk5XAEajA-unsplash.jpg",
     "/Product Images/bernd-dittrich-CDA62CsGDDM-unsplash.jpg",
     "/Product Images/caspar-rae-7H_WbyDLpvk-unsplash.jpg",
-    "/Product Images/caspar-rae-b6vAiN3wYNw-unsplash.jpg",
-    "/Product Images/caspar-rae-zdynMHlDuwA-unsplash.jpg"
+    "/Product Images/caspar-rae-b6vAiN3wYNw-unsplash.jpg"
   ],
   
   // Hybrid Solar Systems
@@ -27,8 +22,7 @@ export const productImageMap = {
     "/Product Images/andreas-gucklhorn-7razCd-RUGs-unsplash.jpg",
     "/Product Images/andres-siimon-fCv4k5aAZf4-unsplash.jpg",
     "/Product Images/angie-warren-ZO7UsokVH98-unsplash.jpg",
-    "/Product Images/antonio-garcia-ndz_u1_tFZo-unsplash.jpg",
-    "/Product Images/asia-chang-Yr-PvhKiorM-unsplash.jpg"
+    "/Product Images/antonio-garcia-ndz_u1_tFZo-unsplash.jpg"
   ],
   
   // Commercial Solar Systems
@@ -36,19 +30,16 @@ export const productImageMap = {
     "/Product Images/benjamin-jopen-p2GuLUu79Rg-unsplash.jpg",
     "/Product Images/benjamin-jopen-To-B9ICXPnc-unsplash.jpg",
     "/Product Images/bill-mead-wmaP3Tl80ww-unsplash.jpg",
-    "/Product Images/bradley-prentice-6ka0156E5Is-unsplash.jpg",
-    "/Product Images/c-g-m4YOsFxziWE-unsplash.jpg"
+    "/Product Images/bradley-prentice-6ka0156E5Is-unsplash.jpg"
   ],
   
   // Industrial Solar Systems
   "Industrial Solar System": [
     "/Product Images/chirayu-trivedi-twOIx6I35tk-unsplash.jpg",
     "/Product Images/chuttersnap-s_7BE4D2va0-unsplash.jpg",
-    "/Product Images/dad-hotel--5JxaDg1gZU-unsplash.jpg",
     "/Product Images/dad-hotel-6Vd8Pt9zk4M-unsplash.jpg",
     "/Product Images/dad-hotel-6wg8GbD0UZ0-unsplash.jpg",
-    "/Product Images/dad-hotel-eNzotIHdUsY-unsplash.jpg",
-    "/Product Images/dad-hotel-iopyZ4hDCNQ-unsplash.jpg"
+    "/Product Images/dad-hotel-eNzotIHdUsY-unsplash.jpg"
   ],
   
   // Residential Solar Systems
@@ -56,8 +47,7 @@ export const productImageMap = {
     "/Product Images/daniele-la-rosa-messina-3-Xc8g-Zkvw-unsplash.jpg",
     "/Product Images/daniele-la-rosa-messina-bfctRi7VIWA-unsplash.jpg",
     "/Product Images/daniele-la-rosa-messina-OiPtLN9_04w-unsplash.jpg",
-    "/Product Images/danist-soh-cG_i_YmXsik-unsplash.jpg",
-    "/Product Images/daria-nepriakhina-NFJ-Sj8ZcHQ-unsplash.jpg"
+    "/Product Images/danist-soh-cG_i_YmXsik-unsplash.jpg"
   ],
   
   // Solar Panels
@@ -65,8 +55,7 @@ export const productImageMap = {
     "/Product Images/derek-sutton-rfgsYFb_5ow-unsplash.jpg",
     "/Product Images/derek-sutton-SxDPsKCGk40-unsplash.jpg",
     "/Product Images/gabriel-riFb-zdJ5QA-unsplash.jpg",
-    "/Product Images/green-voltaics-energy-TtyY0tr7_as-unsplash.jpg",
-    "/Product Images/guillherme-schneider-ecIS-bfYSG8-unsplash.jpg"
+    "/Product Images/green-voltaics-energy-TtyY0tr7_as-unsplash.jpg"
   ],
   
   // Solar Inverters
@@ -74,8 +63,7 @@ export const productImageMap = {
     "/Product Images/harisankar-hp6Xj7LyZ1E-unsplash.jpg",
     "/Product Images/insung-yoon-Wxg44AyonDw-unsplash.jpg",
     "/Product Images/istvan-hernek-tOKF2VSdpJM-unsplash.jpg",
-    "/Product Images/jackery-power-station-AeZoW5oqB1Y-unsplash.jpg",
-    "/Product Images/jason-mavrommatis-KRWfiWPqbq8-unsplash.jpg"
+    "/Product Images/jackery-power-station-AeZoW5oqB1Y-unsplash.jpg"
   ],
   
   // Solar Batteries
@@ -83,8 +71,7 @@ export const productImageMap = {
     "/Product Images/jeroen-van-de-water-aQOzmgcT6sI-unsplash.jpg",
     "/Product Images/joshua-tsu-eBHZCFIB3gE-unsplash.jpg",
     "/Product Images/jubbar-j-O8LNR5UARwM-unsplash.jpg",
-    "/Product Images/justin-lim-Fpcy-AdFhUg-unsplash.jpg",
-    "/Product Images/kay-dittner-nzmidcW30ao-unsplash.jpg"
+    "/Product Images/justin-lim-Fpcy-AdFhUg-unsplash.jpg"
   ],
   
   // Solar Accessories
@@ -93,16 +80,18 @@ export const productImageMap = {
     "/Product Images/maksym-diachenko-VfuY3s3w7sw-unsplash.jpg",
     "/Product Images/manny-becerra-NgdhrwAx0J8-unsplash.jpg",
     "/Product Images/marco-pregnolato-ZGhOgcMhNQg-unsplash.jpg",
-    "/Product Images/mariana-proenca-_h0xG4s6NFg-unsplash.jpg"
+    "/Product Images/raze-solar-_aSFmmvS62I-unsplash.jpg",
+    "/Product Images/raze-solar-GXLPLG3_Vf4-unsplash.jpg"
   ],
   
   // Default fallback images
   "default": [
     "/Product Images/solar-panels-meadow.jpg",
     "/Product Images/3d-rendered-solar-panel-isolated-white-background.jpg",
-    "/Product Images/man-worker-firld-by-solar-panels.jpg",
     "/Product Images/beautiful-alternative-energy-plant-with-solar-panels.jpg",
-    "/Product Images/solar-panels-meadow.jpg"
+    "/Product Images/american-public-power-association-513dBrMJ_5w-unsplash.jpg",
+    "/Product Images/bernd-dittrich-6yTk5XAEajA-unsplash.jpg",
+    "/Product Images/caspar-rae-7H_WbyDLpvk-unsplash.jpg"
   ]
 };
 
@@ -127,6 +116,18 @@ export const getProductImages = (productType) => {
   return productImageMap.default;
 };
 
+// Get fallback images that are guaranteed to exist
+export const getFallbackImages = () => {
+  return [
+    "/Product Images/solar-panels-meadow.jpg",
+    "/Product Images/3d-rendered-solar-panel-isolated-white-background.jpg",
+    "/Product Images/beautiful-alternative-energy-plant-with-solar-panels.jpg",
+    "/Product Images/american-public-power-association-513dBrMJ_5w-unsplash.jpg",
+    "/Product Images/bernd-dittrich-6yTk5XAEajA-unsplash.jpg",
+    "/Product Images/caspar-rae-7H_WbyDLpvk-unsplash.jpg"
+  ];
+};
+
 // Get a random image from the product type
 export const getRandomProductImage = (productType) => {
   const images = getProductImages(productType);
@@ -147,4 +148,72 @@ export const getAvailableProductTypes = () => {
 // Get image count for a product type
 export const getImageCount = (productType) => {
   return getProductImages(productType).length;
+};
+
+// Global set to track used first images across all product cards
+let usedFirstImages = new Set();
+
+// Get shuffled images for random first image display with guaranteed uniqueness
+export const getShuffledProductImages = (productType) => {
+  const images = getProductImages(productType);
+  const shuffled = [...images];
+  
+  // Fisher-Yates shuffle algorithm
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled;
+};
+
+// Get unique first image that hasn't been used before
+export const getUniqueFirstImage = (productType) => {
+  const images = getProductImages(productType);
+  const availableImages = images.filter(img => !usedFirstImages.has(img));
+  
+  // If all images have been used, reset the used set and start fresh
+  if (availableImages.length === 0) {
+    usedFirstImages.clear();
+    availableImages.push(...images);
+  }
+  
+  // Select a random image from available images
+  const selectedImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+  
+  // Mark this image as used
+  usedFirstImages.add(selectedImage);
+  
+  return selectedImage;
+};
+
+// Get shuffled images with unique first image
+export const getShuffledProductImagesWithUniqueFirst = (productType) => {
+  const images = getProductImages(productType);
+  const uniqueFirstImage = getUniqueFirstImage(productType);
+  
+  // Remove the unique first image from the array
+  const remainingImages = images.filter(img => img !== uniqueFirstImage);
+  
+  // Shuffle the remaining images
+  const shuffled = [...remainingImages];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  // Return the unique first image followed by shuffled remaining images
+  return [uniqueFirstImage, ...shuffled];
+};
+
+// Reset the used images tracking (useful for page refresh or when starting fresh)
+export const resetUsedImages = () => {
+  usedFirstImages.clear();
+};
+
+// Get count of remaining unique images available
+export const getRemainingUniqueImagesCount = (productType) => {
+  const images = getProductImages(productType);
+  const availableImages = images.filter(img => !usedFirstImages.has(img));
+  return availableImages.length;
 };

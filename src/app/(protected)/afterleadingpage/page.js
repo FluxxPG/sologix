@@ -7,6 +7,7 @@ import { ProductCardFirst } from "@/components/product-card/ProductCardFirst";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ProductCardSkeleton } from "@/components/common/LoadingSkeleton";
+import { resetUsedImages } from "@/utils/productImages";
 
 const AfterLeadingPageContent = () => {
   const router = useRouter();
@@ -51,6 +52,9 @@ const AfterLeadingPageContent = () => {
     if (!requireAuth(router)) {
       return; // Redirect handled by requireAuth
     }
+    
+    // Reset used images for fresh unique images on each page load
+    resetUsedImages();
     
     // If logged in, fetch products
     getProductsList();
@@ -152,13 +156,10 @@ const AfterLeadingPageContent = () => {
                 <div key={product._id} className="flex justify-center">
                   <ProductCardFirst
                     title={product.system || product.name}
-                    imageSrc={
-                      product.images?.[0]?.url || 
-                      (product.system === "On-Grid Solar System" ? "/product-one.png" : "/product-three.png")
-                    }
                     description={product.product_description || product.description}
                     productDetails={product.product_details || {}}
                     productId={product._id}
+                    productType={product.system || product.name}
                     onBuyNow={() => handlePressCard(product)}
                     handleAddToCart={() => handleAddToCart(product)}
                     handlePressCard={() => handlePressCard(product)}
