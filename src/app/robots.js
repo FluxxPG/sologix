@@ -9,6 +9,6 @@ export default function robots() {
         disallow: ['/api/', '/admin/', '/_next/', '/private/'],
       },
     ],
-    sitemap: 'https://sologixenergy.in/sitemap.xml',
+    sitemap: 'https://sologixenergy.com/sitemap.xml',
   };
 }

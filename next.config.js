@@ -74,7 +74,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://sologix-backend-bof5vafdt-numans-projects-a947d1ec.vercel.app/api/:path*',
+        destination: 'https://sologix-web-nvm3.vercel.app/api/:path*',
       },
     ];
   },

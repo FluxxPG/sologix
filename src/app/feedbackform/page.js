@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
+import { API } from "@/utils";
 
 export default function AddFeedbackForm() {
   const [formData, setFormData] = useState({
@@ -29,34 +29,17 @@ export default function AddFeedbackForm() {
     e.preventDefault();
 
     try {
-      const userSession = localStorage.getItem("userSession");
-      const parsedSession = userSession ? JSON.parse(userSession) : null;
-      const accessToken = parsedSession?.access_token;
-
-      if (!accessToken) {
-        throw new Error("Access token not found");
-      }
-
-      const response = await axios.post(
-        "https://sologix-web.onrender.com/v1/feedbacks/postfeedback",
-        {
-          clientName: formData.clientName,
-          designation: formData.designation,
-          company: formData.company,
-          comment: formData.comment,
-          systemCapacity: Number(formData.systemCapacity),
-          systemType: formData.systemType,
-          location: formData.location,
-          annual_energy_generation: Number(formData.annual_energy_generation),
-          annual_savings: Number(formData.annual_savings),
-        },
-        {
-          headers: {
-            Authorization: `token ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await API.post("/feedbacks/postfeedback", {
+        clientName: formData.clientName,
+        designation: formData.designation,
+        company: formData.company,
+        comment: formData.comment,
+        systemCapacity: Number(formData.systemCapacity),
+        systemType: formData.systemType,
+        location: formData.location,
+        annual_energy_generation: Number(formData.annual_energy_generation),
+        annual_savings: Number(formData.annual_savings),
+      });
 
       if (response.status === 200) {
         setMessage("✅ Feedback added successfully!");

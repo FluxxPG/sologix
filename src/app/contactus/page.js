@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Form, Input, Checkbox, Button } from "antd";
 import { toast } from "sonner";
@@ -17,8 +17,8 @@ const contactInfo = [
   {
     icon: <FaEnvelope className="text-3xl text-blue-600" />,
     title: "Email",
-    description: "info@sologixenergy.in",
-    link: "mailto:info@sologixenergy.in"
+    description: "info@sologixenergy.com",
+    link: "mailto:info@sologixenergy.com"
   },
   {
     icon: <FaMapMarkerAlt className="text-3xl text-blue-600" />,
@@ -31,24 +31,31 @@ const contactInfo = [
 const ContactUs = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Check for success parameter in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      setShowSuccess(true);
+      // Remove the success parameter from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleSubmit = (values) => {
-    
     // Clean and normalize the data directly from form values
-    // Match the exact field names expected by the backend
     const cleanedData = {
       name: values.name?.trim() || "",
       phone: values.phone?.trim() || "",
       email: values.email?.trim() || "",
       state: values.state?.trim() || "",
       city: values.city?.trim() || "",
-      subject: values.message?.trim() || "", // Backend expects 'subject'
+      subject: values.subject?.trim() || "",
       message: values.message?.trim() || "",
-      intrest: values.interest || [], // Backend has typo: 'intrest' not 'interest'
+      interest: values.interest || []
     };
-    
-    
-    
+
     // Validate required fields
     if (!cleanedData.name || !cleanedData.email || !cleanedData.phone) {
       toast.error("Please fill in all required fields");
@@ -96,69 +103,48 @@ const ContactUs = () => {
     }
 
     setLoading(true);
+
+    // Create FormSubmit payload
+    const formData = new FormData();
+    formData.append('name', cleanedData.name);
+    formData.append('email', cleanedData.email);
+    formData.append('phone', cleanedData.phone);
+    formData.append('state', cleanedData.state);
+    formData.append('city', cleanedData.city);
+    formData.append('subject', cleanedData.subject);
+    formData.append('message', cleanedData.message);
+    formData.append('interest', cleanedData.interest.join(', '));
     
-    
-    // Create a minimal test payload first
-    const minimalPayload = {
-      name: cleanedData.name,
-      phone: cleanedData.phone,
-      email: cleanedData.email,
-      state: cleanedData.state || "",
-      city: cleanedData.city || "",
-      subject: cleanedData.subject || "",
-      message: cleanedData.message || "",
-      intrest: []  // Empty array to avoid any serialization issues
-    };
-    
-    
-    // Send data with exact field names expected by backend
-    API.post("/auth/contact-us", minimalPayload)
-      .then((response) => {
-        
-        if (response.status === 200 || response.status === 201 || response.status === 202) {
-          // Check if response contains an error message even with success status
-          if (response.data?.error) {
-            
-            // Special handling for the known backend validation bug
-            if (response.data.error === "Name should be between 2 and 50 characters!") {
-              
-              toast.error("Backend validation error: The server incorrectly rejected your valid name. Please inform the development team about this bug.");
-              
-            } else {
-              toast.error(response.data.error);
-            }
-            setLoading(false);
-          } else {
-            toast.success("Successfully submitted! We'll get back to you soon.");
-            // Reset Ant Design form
-            form.resetFields();
-            setLoading(false);
-          }
-        } else {
-          toast.error(response?.data?.message || response?.data?.error || "Submission failed");
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        let errorMessage = "Data submission failed";
-        
-        const serverError = error.response?.data?.error;
-        
-        if (serverError) {
-          errorMessage = serverError;
-        } else if (error.response?.status === 404) {
-          errorMessage = "Contact form endpoint not found. Please try again later.";
-        } else if (error.response?.status === 500) {
-          errorMessage = "Server error. Please try again later or contact support.";
-        } else if (error.response?.status === 400) {
-          errorMessage = error.response?.data?.message || "Invalid form data. Please check your inputs.";
-        } else if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
-          errorMessage = "Network connection failed. Please check your internet connection.";
-        }
-        
-        toast.error(errorMessage);
+    // FormSubmit configuration
+    formData.append('_subject', `New Contact Form Submission - ${cleanedData.name}`);
+    formData.append('_replyto', cleanedData.email);
+    formData.append('_next', window.location.origin + '/contactus?success=true');
+    formData.append('_autoresponse', 'Thank you for contacting Sologix! We have received your message and will get back to you soon.');
+
+    // Submit to FormSubmit
+    fetch('https://formsubmit.co/sologixenergy7@gmail.com', {
+      method: 'POST',
+      body: formData
+    })
+    .then((response) => {
+      if (response.ok) {
+        toast.success("✅ Form submitted successfully! We'll get back to you soon.");
+        form.resetFields();
         setLoading(false);
-      });
+        
+        // Redirect to success page
+        setTimeout(() => {
+          window.location.href = '/contactus?success=true';
+        }, 2000);
+      } else {
+        throw new Error('Form submission failed');
+      }
+    })
+    .catch((error) => {
+      console.error('FormSubmit error:', error);
+      toast.error("Failed to submit form. Please try again or contact us directly.");
+      setLoading(false);
+    });
   };
 
   return (
@@ -242,6 +228,23 @@ const ContactUs = () => {
               Fill out the form below and our team will get back to you as soon as possible.
             </p>
           </div>
+
+          {/* Success Message */}
+          {showSuccess && (
+            <div className="mb-8 p-6 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex items-center justify-center">
+                <div className="bg-green-100 p-3 rounded-full mr-4">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-green-800 mb-1">Message Sent Successfully!</h3>
+                  <p className="text-green-700">Thank you for contacting us. We'll get back to you soon!</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
             <Form 

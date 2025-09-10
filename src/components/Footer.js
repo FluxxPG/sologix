@@ -142,16 +142,16 @@ export const Footer = () => {
                   <FiMail className="text-blue-400 text-xl" />
                   <div className="flex flex-col space-y-1">
                     <a
-                      href="mailto:info@sologixenergy.in"
+                      href="mailto:info@sologixenergy.com"
                       className="text-gray-300 hover:text-white transition-colors duration-300"
                     >
-                      info@sologixenergy.in
+                      info@sologixenergy.com
                     </a>
                     <a
-                      href="mailto:amit@sologixenergy.in"
+                      href="mailto:amit@sologixenergy.com"
                       className="text-gray-300 hover:text-white transition-colors duration-300"
                     >
-                      amit@sologixenergy.in
+                      amit@sologixenergy.com
                     </a>
                   </div>
                 </div>

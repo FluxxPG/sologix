@@ -20,9 +20,9 @@ export const metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://sologixenergy.in'),
+  metadataBase: new URL('https://sologixenergy.com'),
   alternates: {
-    canonical: 'https://sologixenergy.in',
+    canonical: 'https://sologixenergy.com',
   },
 };
 
