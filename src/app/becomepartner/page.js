@@ -1,9 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import Image from "next/image";
-import { Card, Form, Input, Checkbox } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Checkbox } from "antd";
 import { toast } from "sonner";
-import { API } from "@/utils";
 import { PartnerHero } from "@/components/Home/PartnerHero";
 import SectionHeader from "@/components/common/SectionHeader";
 
@@ -39,6 +37,8 @@ const benefits = [
 ];
 
 const BecomePartner = () => {
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -50,6 +50,15 @@ const BecomePartner = () => {
     interest: [],
   });
 
+  // Show success banner after redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success") === "true") {
+      setShowSuccess(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const handleCheckboxChange = (checkedValues) => {
     setFormData((prev) => ({
       ...prev,
@@ -57,11 +66,61 @@ const BecomePartner = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    API.post("/auth/contact-us", formData)
+  const handleSubmit = (values) => {
+    // Normalize from AntD values to ensure consistency
+    const cleanedData = {
+      name: (values.name || formData.name || "").trim(),
+      email: (values.email || formData.email || "").trim(),
+      phone: (values.phone || formData.phone || "").trim(),
+      state: (values.state || formData.state || "").trim(),
+      city: (values.city || formData.city || "").trim(),
+      pincode: (values.pincode || formData.pincode || "").trim(),
+      message: (values.message || formData.message || "").trim(),
+      interest: values.interest || formData.interest || [],
+    };
+
+    if (!cleanedData.name || !cleanedData.email || !cleanedData.phone) {
+      toast.error("Please fill in name, email and phone");
+      return;
+    }
+
+    setLoading(true);
+
+    const payload = new FormData();
+    payload.append("name", cleanedData.name);
+    payload.append("email", cleanedData.email);
+    payload.append("phone", cleanedData.phone);
+    payload.append("state", cleanedData.state);
+    payload.append("city", cleanedData.city);
+    payload.append("pincode", cleanedData.pincode);
+    payload.append("message", cleanedData.message);
+    payload.append("interest", (cleanedData.interest || []).join(", "));
+    // Helpful metadata for email
+    payload.append("form_name", "Become a Partner Form");
+    payload.append("submitted_at", new Date().toISOString());
+    payload.append("page_url", window.location.href);
+
+    // FormSubmit config
+    payload.append("_subject", `[SologixEnergy] Partner Application - ${cleanedData.name}`);
+    payload.append("_replyto", cleanedData.email);
+    payload.append("_next", window.location.origin + "/becomepartner?success=true");
+    payload.append(
+      "_autoresponse",
+      "Thank you for your partner application to SologixEnergy! Our team will get back to you within 24 hours."
+    );
+    payload.append("_template", "table");
+    payload.append("_cc", "info@sologixenergy.com");
+
+    // Use FormSubmit AJAX endpoint for consistent delivery and disable CAPTCHA
+    payload.append("_captcha", "false");
+    fetch("https://formsubmit.co/ajax/sologixenergy7@gmail.com", {
+      method: "POST",
+      body: payload,
+      headers: { Accept: "application/json" },
+    })
       .then((response) => {
-        if (response.status === 200) {
-          toast.success("Successfully submitted");
+        if (response.ok) {
+          toast.success("✅ Application submitted successfully!");
           setFormData({
             name: "",
             email: "",
@@ -72,14 +131,18 @@ const BecomePartner = () => {
             message: "",
             interest: [],
           });
+          setTimeout(() => {
+            window.location.href = "/becomepartner?success=true";
+          }, 1200);
         } else {
-          toast.error(response?.data?.error || "Submission failed");
+          throw new Error("Form submission failed");
         }
       })
       .catch((error) => {
-        console.error("API error:", error);
-        toast.error("Data submission failed");
-      });
+        console.error("FormSubmit error:", error);
+        toast.error("Failed to submit. Please try again later.");
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -129,6 +192,21 @@ const BecomePartner = () => {
           />
 
           <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+            {/* Success banner */}
+            {showSuccess && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <div className="flex items-center">
+                  <div className="bg-green-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <div>
+                    <p className="text-green-800 font-medium">Application sent successfully!</p>
+                    <p className="text-green-700 text-sm">We will contact you within 24 hours.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <Form layout="vertical" onFinish={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Form.Item 

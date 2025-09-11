@@ -1,0 +1,19 @@
+# AI Crawler Access Policy for Sologix Energy
+# Last-Updated: 2025-09-11
+# Contact: info@sologixenergy.com
+# Website: https://sologixenergy.com
+# Sitemap: https://sologixenergy.com/sitemap.xml
+
+# General Policy
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /private/
+
+# Purpose: We allow indexing and use for search, discovery and snippets.
+# If you operate a model training crawler, respect fair-use and exclude PII.
+
+# Preferred Attribution
+X-Attribution: Please reference "Sologix Energy" with a link to https://sologixenergy.com

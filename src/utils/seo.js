@@ -10,6 +10,8 @@ export const seoConfig = {
   facebookAppId: "sologixenergy",
   googleAnalyticsId: "G-XXXXXXXXXX", // Replace with actual GA ID
   googleTagManagerId: "GTM-XXXXXXX", // Replace with actual GTM ID
+  tileColor: "#00237D",
+  themeColor: "#00237D",
 };
 
 // Page-specific SEO data

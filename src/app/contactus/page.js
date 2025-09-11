@@ -51,6 +51,7 @@ const ContactUs = () => {
       email: values.email?.trim() || "",
       state: values.state?.trim() || "",
       city: values.city?.trim() || "",
+      pincode: values.pincode?.trim() || "",
       subject: values.subject?.trim() || "",
       message: values.message?.trim() || "",
       interest: values.interest || []
@@ -111,20 +112,29 @@ const ContactUs = () => {
     formData.append('phone', cleanedData.phone);
     formData.append('state', cleanedData.state);
     formData.append('city', cleanedData.city);
+    formData.append('pincode', cleanedData.pincode);
     formData.append('subject', cleanedData.subject);
     formData.append('message', cleanedData.message);
     formData.append('interest', cleanedData.interest.join(', '));
+    // Helpful metadata for email
+    formData.append('form_name', 'Contact Us Form');
+    formData.append('submitted_at', new Date().toISOString());
+    formData.append('page_url', window.location.href);
     
     // FormSubmit configuration
-    formData.append('_subject', `New Contact Form Submission - ${cleanedData.name}`);
+    formData.append('_subject', `[SologixEnergy] Contact Form - ${cleanedData.name}`);
     formData.append('_replyto', cleanedData.email);
     formData.append('_next', window.location.origin + '/contactus?success=true');
     formData.append('_autoresponse', 'Thank you for contacting Sologix! We have received your message and will get back to you soon.');
+    formData.append('_template', 'table');
+    formData.append('_cc', 'info@sologixenergy.com');
 
-    // Submit to FormSubmit
-    fetch('https://formsubmit.co/sologixenergy7@gmail.com', {
+    // Submit to FormSubmit (AJAX endpoint for reliable JSON response)
+    formData.append('_captcha', 'false');
+    fetch('https://formsubmit.co/ajax/sologixenergy7@gmail.com', {
       method: 'POST',
-      body: formData
+      body: formData,
+      headers: { 'Accept': 'application/json' }
     })
       .then((response) => {
       if (response.ok) {
