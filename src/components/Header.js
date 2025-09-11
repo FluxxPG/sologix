@@ -113,19 +113,26 @@ const Header = () => {
   };
 
   const dropdownItems = [
-    {
-      key: "1",
-      label: <a href="/">Home</a>,
-    },
-    {
-      key: "2",
-      label: <a href="/payment-history">My Payments</a>,
-    },
-    {
-      key: "3",
-      label: <button onClick={handleClickLogout}>Logout</button>,
-    },
+    { key: "home", label: "Home" },
+    { key: "payments", label: "My Payments" },
+    { key: "logout", label: "Logout" },
   ];
+
+  const handleDropdownClick = ({ key }) => {
+    switch (key) {
+      case "home":
+        router.push("/");
+        break;
+      case "payments":
+        router.push("/payment-history");
+        break;
+      case "logout":
+        handleClickLogout();
+        break;
+      default:
+        break;
+    }
+  };
 
   // Helper function to check if a route is active
   const isActiveRoute = (route) => {
@@ -237,7 +244,7 @@ const Header = () => {
                 {/* Desktop Cart and Account */}
                 <div className="hidden xl:flex items-center gap-6 h-full">
                   <Dropdown
-                    menu={{ items: dropdownItems }}
+                    menu={{ items: dropdownItems, onClick: handleDropdownClick }}
                     className="cursor-pointer"
                   >
                     <div className="bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-5 py-2.5 rounded-lg transition-all duration-200 min-w-[120px] text-center group border border-blue-200 hover:border-blue-300 hover:shadow-md flex items-center justify-center h-full">
