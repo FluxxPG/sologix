@@ -39,6 +39,7 @@ export const Registration = () => {
       setLoading(true);
       await schema.parseAsync(data);
 
+      // Send fields with backward compatibility (some backends require confirmPassword)
       const response = await API.post("/auth/register", {
         name: data.name,
         phone: data.phone,
@@ -47,17 +48,21 @@ export const Registration = () => {
         confirmPassword: data.confirmPassword,
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         toast.success("Registration successful! Please log in.");
         router.push("/login");
         reset();
+      } else {
+        const serverMsg = response.data?.error || response.data?.message || `Unexpected response (${response.status})`;
+        toast.error(serverMsg);
       }
     } catch (error) {
       console.error("Registration error:", error);
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else {
-        toast.error(error.response?.data?.message || "Registration failed. Please try again.");
+        const serverMsg = error.response?.data?.error || error.response?.data?.message;
+        toast.error(serverMsg || "Registration failed. Please try again.");
       }
     } finally {
       setLoading(false);

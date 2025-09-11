@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://sologix-web-nvm3.vercel.app" />
         <meta name="theme-color" content="#00237D" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no,address=no,email=no" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
