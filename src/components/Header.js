@@ -200,18 +200,18 @@ const Header = () => {
                 .map((item) => {
                   const isActive = isActiveRoute(item.route);
                   return (
-                    <NavbarItem key={item.route}>
-                      <Link
-                        href={item.route}
+                <NavbarItem key={item.route}>
+                  <Link
+                    href={item.route}
                         className={`px-3 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap text-sm hover:shadow-sm ${
                           isActive
                             ? "bg-blue-100 text-blue-700 border border-blue-200"
                             : "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                         }`}
-                      >
-                        {item.name}
-                      </Link>
-                    </NavbarItem>
+                  >
+                    {item.name}
+                  </Link>
+                </NavbarItem>
                   );
                 })}
             </div>
@@ -258,28 +258,28 @@ const Header = () => {
                           <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                         <span className="text-blue-800 font-semibold whitespace-nowrap text-sm group-hover:text-blue-900 transition-colors duration-200">My Account</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
                           width="12"
                           height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                           className="text-blue-700 group-hover:text-blue-800 transition-colors duration-200"
-                        >
+                  >
                           <polyline points="6,9 12,15 18,9"></polyline>
-                        </svg>
-                      </div>
+                  </svg>
                     </div>
-                  </Dropdown>
+                  </div>
+                </Dropdown>
                   
                   <div className="flex items-center h-full">
                     <CartIcon size={24} />
                   </div>
-                </div>
+              </div>
               </>
             )}
             
@@ -303,16 +303,16 @@ const Header = () => {
               const isActive = isActiveRoute(item.route);
               return (
                 <NavbarMenuItem key={item.route} className="px-4">
-                  <Link
+              <Link
                     className={`w-full py-4 px-4 rounded-xl font-medium transition-all duration-200 ${
                       isActive
                         ? "bg-blue-50 text-blue-700 border-l-4 border-blue-500"
                         : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }`}
-                    href={item.route}
-                    size="lg"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
+                href={item.route}
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
                     <div className="flex items-center gap-3">
                       <div className={`w-2 h-2 rounded-full ${
                         isActive ? "bg-blue-500" : "bg-gray-400"
@@ -397,8 +397,8 @@ const Header = () => {
                     <span className="font-semibold text-gray-800 group-hover:text-green-700 transition-colors duration-200 text-base">My Payments</span>
                     <p className="text-sm text-gray-500 group-hover:text-green-600 transition-colors duration-200">Payment history</p>
                   </div>
-                </Link>
-              </NavbarMenuItem>
+              </Link>
+            </NavbarMenuItem>
               
               <NavbarMenuItem className="px-4">
                 <button

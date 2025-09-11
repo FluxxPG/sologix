@@ -126,7 +126,7 @@ const ContactUs = () => {
       method: 'POST',
       body: formData
     })
-    .then((response) => {
+      .then((response) => {
       if (response.ok) {
         toast.success("✅ Form submitted successfully! We'll get back to you soon.");
         form.resetFields();
@@ -136,15 +136,15 @@ const ContactUs = () => {
         setTimeout(() => {
           window.location.href = '/contactus?success=true';
         }, 2000);
-      } else {
+        } else {
         throw new Error('Form submission failed');
-      }
-    })
-    .catch((error) => {
+        }
+      })
+      .catch((error) => {
       console.error('FormSubmit error:', error);
       toast.error("Failed to submit form. Please try again or contact us directly.");
       setLoading(false);
-    });
+      });
   };
 
   return (

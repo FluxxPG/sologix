@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import RazorpayCheckout from "@/components/Payments/RazorpayCheckout";
 import { CartItemSkeleton } from "@/components/common/LoadingSkeleton";
+import ProductImageGallery from "@/components/common/ProductImageGallery";
 
 const CartPage = () => {
   const router = useRouter();
@@ -564,7 +565,7 @@ const CartPage = () => {
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-4 md:mb-6">
         Your Cart
       </h1>
-      <div className="max-w-2xl mx-auto bg-white p-4 md:p-6 rounded-lg shadow-lg">
+      <div className="max-w-3xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-gray-100">
         {loading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, index) => (
@@ -592,37 +593,32 @@ const CartPage = () => {
                 )}
               </button>
 
-              {/* Product Image */}
-              <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-lg mb-2 md:mb-0 md:mr-6 flex-shrink-0">
-                <Image
-                  src={
-                    item.system == "On-Grid Solar System"
-                      ? "/product-one.png"
-                      : "/product-three.png"
-                  }
-                  alt={item.system}
-                  fill
-                  className="object-contain rounded-lg"
-                  sizes="(max-width: 80px) 80px, 80px"
-                />
+              {/* Product Image Gallery (mirrors product details UI) */}
+              <div className="w-full md:w-56 lg:w-64 mb-3 md:mb-0 md:mr-6">
+                <div className="rounded-xl overflow-hidden shadow-md border border-gray-100">
+                  <ProductImageGallery
+                    productType={item.system || "On-Grid Solar System"}
+                    productName={item.system || "Solar System"}
+                    className="w-full"
+                    showGallery={false}
+                    imageHeight="h-40 sm:h-44 md:h-48 lg:h-52"
+                  />
+                </div>
               </div>
 
               <div className="flex-1 text-left">
-                <h2 className="text-base md:text-lg font-semibold">
+                <h2 className="text-lg md:text-xl font-bold text-[#00237D] mb-1">
                   {item.system}
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-600">
                   {item.product_description}
                 </p>
-                <p className="text-gray-600 text-sm md:text-base">
+                <p className="text-gray-600 text-sm md:text-base mt-2">
                   Roof Area: {item.product_details.Roof_area_required} sqm
                 </p>
                 <p className="text-gray-600 text-sm md:text-base">
                   Annual Generation:{" "}
                   {item.product_details.Annual_energy_generation} kWh
-                </p>
-                <p className="text-green-600 font-bold text-base md:text-lg">
-                  Cost: ₹{item.product_details.Cost_to_consumer}
                 </p>
                 <p className="text-blue-600 text-sm md:text-base">
                   Annual Savings: ₹{item.product_details.Annual_saving}
@@ -633,6 +629,11 @@ const CartPage = () => {
                 <p className="text-gray-600 text-sm md:text-base">
                   Payback Period: {item.product_details.Payback_period} years
                 </p>
+                <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-100 inline-block">
+                  <p className="text-xs text-gray-600">Booking Amount</p>
+                  <p className="text-xl font-bold text-[#00237D]">₹2,000</p>
+                  <p className="text-xs text-gray-500">Remaining payable later</p>
+                </div>
               </div>
             </div>
           ))
